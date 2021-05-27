@@ -1,11 +1,11 @@
 package com.revature.ATeamWebApp.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.ATeamORM.repos.ObjectRepo;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+@WebServlet("/user")
 public class UserServlet extends HttpServlet {
 
     private UserService userService;

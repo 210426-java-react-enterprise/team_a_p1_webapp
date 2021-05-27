@@ -1,9 +1,8 @@
 package com.revature.ATeamWebApp.services;
 
-import com.revature.ATeamWebApp.daos.UserDAO;
+import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.exceptions.*;
 import com.revature.ATeamWebApp.models.AppUser;
-import com.revature.ATeamWebApp.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.util.logging.Logger;
 
 import java.sql.Connection;
@@ -15,14 +14,14 @@ import java.util.function.Predicate;
 public class UserService {
 
     private Logger logger = Logger.getLogger();
-    private UserDAO userDao;
+    
 
-    public UserService(UserDAO userDao) {
-        this.userDao = userDao;
+    public UserService() {
+    
     }
 
     public List<AppUser> getAllUsers() {
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+        try (Connection conn =ConnectionFactory.getInstance().getConnection()) {
             return userDao.findAllUsers(conn);
         }  catch (SQLException | DataSourceException e) {
             logger.warn(e.getMessage());
@@ -30,7 +29,9 @@ public class UserService {
         }
 
     }
-
+    /*
+     
+     */
     public AppUser authenticate(String username, String password) throws AuthenticationException {
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
@@ -46,22 +47,18 @@ public class UserService {
     }
 
     public void register(AppUser newUser) throws InvalidRequestException, ResourcePersistenceException {
-
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
-
+        
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            if (!userDao.isUsernameAvailable(conn, newUser.getUsername())) {
-                throw new UsernameUnavailableException();
-            }
-
-            if (!userDao.isEmailAvailable(conn, newUser.getEmail())) {
-                throw new EmailUnavailableException();
-            }
-
-            userDao.save(conn, newUser);
+    
+          /*  PreparedStatement pstmt = conn.
+            ObjectRepo or = new ObjectRepo();
+            //some logic to check if user is available
+            or.create(conn,newUser,);
+            */
+            
             conn.commit();
 
         } catch (SQLException e) {

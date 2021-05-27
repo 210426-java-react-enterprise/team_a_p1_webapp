@@ -1,8 +1,9 @@
 package com.revature.ATeamWebApp.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import com.revature.ATeamORM.util.annotations.Column;
+import com.revature.ATeamORM.util.annotations.Entity;
+import com.revature.ATeamORM.util.annotations.Id;
+
 
 /*
     Classes must be named the exact same as the file itself!
@@ -14,18 +15,24 @@ import javax.persistence.Id;
         - Does not (usually) contain any methods beyond simple getters and setters
             + maybe the occasional convenience method
  */
-@Entity(name = "appusers")
+@Entity(name="appuser")
 public class AppUser {
-
+    
     @Id
-    @Column(name = "id")
+    @Column(name="user_id")
     private int id;
-
-    @Column(name = "username")
+    @Column(name="username")
     private String username;
-
     @Column(name = "password")
     private String password;
+    @Column(name="email")
+    private String email;
+    @Column(name="first_name")
+    private String firstName; // variables should be in camelCase
+    @Column(name="last_name")
+    private String lastName;
+    @Column(name ="age")
+    private int age;
 
     public AppUser() {
         super();
