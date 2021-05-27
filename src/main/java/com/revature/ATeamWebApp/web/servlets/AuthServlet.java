@@ -2,12 +2,14 @@ package com.revature.ATeamWebApp.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.revature.ATeamWebApp.daos.UserDAO;
+import com.revature.ATeamORM.repos.ObjectRepo;
+import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.dtos.Credentials;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
 import com.revature.ATeamWebApp.util.logging.Logger;
+import connection.PortalConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 
 public class AuthServlet extends HttpServlet {
 
@@ -49,7 +52,17 @@ public class AuthServlet extends HttpServlet {
             logger.info("Attempting to authenticate user, %s, with provided credentials", creds.getUsername());
 
             AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
+    
+    
+            PortalConnection pc = new PortalConnection();
+            Connection conn = ConnectionFactory.getInstance()
+                                               .getConnection();
+            ObjectRepo or = new ObjectRepo();
+            or.sqlUpdateQuery(conn,authUser);
+            
             writer.write(mapper.writeValueAsString(authUser));
+    
+            
 
             req.getSession().setAttribute("this-user", authUser);
 
