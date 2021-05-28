@@ -39,9 +39,10 @@ public class UserService {
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
 
-            return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
+            return objectRepo.read(conn,AppUser.class);
+           /* return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
                                       .orElseThrow(AuthenticationException::new);
-
+*/
         } catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
