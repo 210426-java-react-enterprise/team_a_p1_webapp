@@ -8,8 +8,8 @@ import com.revature.ATeamWebApp.dtos.Credentials;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
+import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import com.revature.ATeamWebApp.util.logging.Logger;
-import connection.PortalConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+
 
 public class AuthServlet extends HttpServlet {
 
@@ -54,11 +55,10 @@ public class AuthServlet extends HttpServlet {
             AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
     
     
-            PortalConnection pc = new PortalConnection();
-            Connection conn = ConnectionFactory.getInstance()
-                                               .getConnection();
+            ConnectionSQL c = new ConnectionSQL();
+            Connection conn = ConnectionFactory.getInstance().getConnection(c);
             ObjectRepo or = new ObjectRepo();
-            or.sqlUpdateQuery(conn,authUser);
+            or.update(conn,authUser);
             
             writer.write(mapper.writeValueAsString(authUser));
     

@@ -1,8 +1,10 @@
 package com.revature.ATeamWebApp.services;
 
+import com.revature.ATeamORM.repos.ObjectRepo;
 import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.exceptions.*;
 import com.revature.ATeamWebApp.models.AppUser;
+import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import com.revature.ATeamWebApp.util.logging.Logger;
 
 import java.sql.Connection;
@@ -14,6 +16,7 @@ import java.util.function.Predicate;
 public class UserService {
 
     private Logger logger = Logger.getLogger();
+    private ObjectRepo objectRepo = new ObjectRepo();
     
 
     public UserService() {
@@ -21,9 +24,9 @@ public class UserService {
     }
 
     public List<AppUser> getAllUsers() {
-        try (Connection conn =ConnectionFactory.getInstance().getConnection()) {
-            return userDao.findAllUsers(conn);
-        }  catch (SQLException | DataSourceException e) {
+        try (Connection conn =ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+            return objectRepo.read(conn, AppUser.class);
+        }  catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
         }
@@ -34,12 +37,12 @@ public class UserService {
      */
     public AppUser authenticate(String username, String password) throws AuthenticationException {
 
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
 
-            return userDao.findUserByUsernameAndPassword(conn, username, password)
+            return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
                                       .orElseThrow(AuthenticationException::new);
 
-        } catch (SQLException | DataSourceException e) {
+        } catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
         }
@@ -51,7 +54,7 @@ public class UserService {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
         
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
     
           /*  PreparedStatement pstmt = conn.
             ObjectRepo or = new ObjectRepo();

@@ -7,5 +7,7 @@ import com.revature.ATeamORM.util.annotations.JDBCConnection;
                 username = "mendozajua",
                 password = "revature"
 )
-public class Connection {
+public class ConnectionSQL {
+
+    public ConnectionSQL() {}
 }
