@@ -39,7 +39,7 @@ public class UserService {
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
 
-            return objectRepo.read(conn,AppUser.class);
+           // return objectRepo.read(conn,AppUser.class);
            /* return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
                                       .orElseThrow(AuthenticationException::new);
 */
@@ -56,12 +56,7 @@ public class UserService {
         }
         
         try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
-    
-          /*  PreparedStatement pstmt = conn.
-            ObjectRepo or = new ObjectRepo();
-            //some logic to check if user is available
-            or.create(conn,newUser,);
-            */
+            
             
             conn.commit();
 
@@ -75,6 +70,11 @@ public class UserService {
         }
 
 
+    }
+    
+    public boolean isUsernameEmailAvailable(AppUser user){
+    
+    
     }
 
     private boolean isUserValid(AppUser user) {

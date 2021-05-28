@@ -51,7 +51,8 @@ public class AuthServlet extends HttpServlet {
         try {
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
             logger.info("Attempting to authenticate user, %s, with provided credentials", creds.getUsername());
-
+            
+            ObjectRepo or = new ObjectRepo();
             AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
     
     
@@ -59,7 +60,7 @@ public class AuthServlet extends HttpServlet {
             Connection conn = ConnectionFactory.getInstance().getConnection(c);
             ObjectRepo or = new ObjectRepo();
             //or.update(conn,authUser);
-            
+            //or.read(authUser);
             writer.write(mapper.writeValueAsString(authUser));
     
             

@@ -37,7 +37,8 @@ public class UserServlet extends HttpServlet {
 
         HttpSession session = req.getSession(false);
         AppUser requestingUser = (session == null) ? null : (AppUser) session.getAttribute("this-user");
-
+        
+        
         if (requestingUser == null) {
             resp.setStatus(401);
             return;
@@ -53,7 +54,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+    
     }
 
     @Override
