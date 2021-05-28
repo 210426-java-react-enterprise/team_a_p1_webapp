@@ -19,6 +19,8 @@ public class UserServlet extends HttpServlet {
 
     private UserService userService;
 
+    public UserServlet() {}
+
     public UserServlet(UserService userService) {
         this.userService = userService;
     }
@@ -26,6 +28,35 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.setContentType("application/json");
+
+        HttpSession session = req.getSession(false);
+        AppUser requestingUser = (session == null) ? null : (AppUser) session.getAttribute("this-user");
+
+        if (requestingUser == null) {
+            resp.setStatus(401);
+            return;
+        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+            resp.setStatus(403);
+            return;
+        }
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+        String firstName = req.getParameter("first_name");
+        String lastName = req.getParameter("last_name");
+        int age = Integer.parseInt(req.getParameter("age"));
+
+        AppUser newUser = new AppUser();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        newUser.setEmail(email);
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setAge(age);
+
+        userService.register(newUser);
     }
 
 
@@ -54,10 +85,56 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.setContentType("application/json");
+
+        HttpSession session = req.getSession(false);
+        AppUser requestingUser = (session == null) ? null : (AppUser) session.getAttribute("this-user");
+
+        if (requestingUser == null) {
+            resp.setStatus(401);
+            return;
+        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+            resp.setStatus(403);
+            return;
+        }
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+        String firstName = req.getParameter("first_name");
+        String lastName = req.getParameter("last_name");
+        int age = Integer.parseInt(req.getParameter("age"));
+
+        AppUser updatedUser = new AppUser();
+        updatedUser.setUsername(username);
+        updatedUser.setPassword(password);
+        updatedUser.setEmail(email);
+        updatedUser.setFirstName(firstName);
+        updatedUser.setLastName(lastName);
+        updatedUser.setAge(age);
+
+        userService.update(updatedUser);
+
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setContentType("application/json");
+
+        HttpSession session = req.getSession(false);
+        AppUser requestingUser = (session == null) ? null : (AppUser) session.getAttribute("this-user");
+
+        if (requestingUser == null) {
+            resp.setStatus(401);
+            return;
+        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+            resp.setStatus(403);
+            return;
+        }
+
+        int id = Integer.parseInt(req.getParameter("id"));
+        userService.delete(id);
 
     }
 }

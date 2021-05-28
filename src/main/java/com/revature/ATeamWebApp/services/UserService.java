@@ -24,7 +24,7 @@ public class UserService {
     }
 
     public List<AppUser> getAllUsers() {
-        try (Connection conn =ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
             return objectRepo.read(conn, AppUser.class);
         }  catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
@@ -50,19 +50,14 @@ public class UserService {
     }
 
     public void register(AppUser newUser) throws InvalidRequestException, ResourcePersistenceException {
+
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
         
         try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
     
-          /*  PreparedStatement pstmt = conn.
-            ObjectRepo or = new ObjectRepo();
-            //some logic to check if user is available
-            or.create(conn,newUser,);
-            */
-            
-            conn.commit();
+            objectRepo.create(conn, newUser);
 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -73,7 +68,40 @@ public class UserService {
             throw new ResourcePersistenceException(e.getMessage());
         }
 
+    }
 
+    public void update(AppUser newUser) throws InvalidRequestException {
+
+        if (!isUserValid(newUser)) {
+            throw new InvalidRequestException("Invalid new user data provided!");
+        }
+
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
+            objectRepo.update(conn, newUser);
+
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            e.printStackTrace();
+            throw new ResourcePersistenceException();
+        } catch (UsernameUnavailableException | EmailUnavailableException e) {
+            logger.warn(e.getMessage());
+            throw new ResourcePersistenceException(e.getMessage());
+        }
+
+    }
+
+    public void delete(int id) throws ResourcePersistenceException {
+
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
+            objectRepo.delete(conn, id);
+
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            e.printStackTrace();
+            throw new ResourcePersistenceException();
+        }
     }
 
     private boolean isUserValid(AppUser user) {
