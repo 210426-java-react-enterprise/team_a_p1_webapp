@@ -58,7 +58,7 @@ public class AuthServlet extends HttpServlet {
             ConnectionSQL c = new ConnectionSQL();
             Connection conn = ConnectionFactory.getInstance().getConnection(c);
             ObjectRepo or = new ObjectRepo();
-            or.update(conn,authUser);
+            //or.update(conn,authUser);
             
             writer.write(mapper.writeValueAsString(authUser));
     
