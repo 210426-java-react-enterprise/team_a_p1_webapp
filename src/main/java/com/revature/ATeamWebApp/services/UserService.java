@@ -1,7 +1,8 @@
 package com.revature.ATeamWebApp.services;
 
+
+import com.revature.ATeamORM.datasource.ConnectionFactory;
 import com.revature.ATeamORM.repos.ObjectRepo;
-import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.exceptions.*;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
@@ -24,12 +25,13 @@ public class UserService {
     }
 
     public List<AppUser> getAllUsers() {
-        try (Connection conn =ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+        /*try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
             return objectRepo.read(conn, AppUser.class);
         }  catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
-        }
+        }*/
+        return null;
 
     }
     /*
@@ -43,22 +45,26 @@ public class UserService {
            /* return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
                                       .orElseThrow(AuthenticationException::new);
 */
-        } catch (SQLException | DataSourceException | IllegalAccessException e) {
+        } catch (SQLException | DataSourceException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
         }
-
+        return null;
     }
 
     public void register(AppUser newUser) throws InvalidRequestException, ResourcePersistenceException {
+
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
         
         try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
             
             
-            conn.commit();
+    
+            objectRepo.create(conn, newUser);
+
 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -69,12 +75,56 @@ public class UserService {
             throw new ResourcePersistenceException(e.getMessage());
         }
 
+    }
 
+    public void update(AppUser newUser) throws InvalidRequestException {
+
+        if (!isUserValid(newUser)) {
+            throw new InvalidRequestException("Invalid new user data provided!");
+        }
+
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
+            objectRepo.update(conn, newUser);
+
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            e.printStackTrace();
+            throw new ResourcePersistenceException();
+        } catch (UsernameUnavailableException | EmailUnavailableException e) {
+            logger.warn(e.getMessage());
+            throw new ResourcePersistenceException(e.getMessage());
+        }
+
+    }
+
+    public void delete(int id) throws ResourcePersistenceException {
+
+        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
+            objectRepo.delete(conn, id);
+
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            e.printStackTrace();
+            throw new ResourcePersistenceException();
+        }
     }
     
     public boolean isUsernameEmailAvailable(AppUser user){
+        ObjectRepo or = new ObjectRepo();
+        Connection conn = null;
+        try {
+            conn = ConnectionFactory.getInstance()
+                                    .getConnection(ConnectionSQL.class);
     
-    
+            return or.isEntryUnique(conn,user);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean isUserValid(AppUser user) {

@@ -1,12 +1,13 @@
 package com.revature.ATeamWebApp.dtos;
 
-import com.revature.ATeamORM.util.annotations.Column;
-import com.revature.ATeamORM.util.annotations.Entity;
+import com.revature.ATeamORM.annotations.Column;
+import com.revature.ATeamORM.annotations.Entity;
+
 
 @Entity(name ="appuser")
 public class Credentials {
     
-    @Column(name="username")
+    @Column(name="username", unique = true)
     private String username;
     @Column(name="password")
     private String password;

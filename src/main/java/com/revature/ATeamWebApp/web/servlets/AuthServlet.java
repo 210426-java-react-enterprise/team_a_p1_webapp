@@ -2,8 +2,10 @@ package com.revature.ATeamWebApp.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
+import com.revature.ATeamORM.datasource.ConnectionFactory;
+import com.revature.ATeamORM.datasource.Session;
 import com.revature.ATeamORM.repos.ObjectRepo;
-import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.dtos.Credentials;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.models.AppUser;
@@ -52,14 +54,17 @@ public class AuthServlet extends HttpServlet {
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
             logger.info("Attempting to authenticate user, %s, with provided credentials", creds.getUsername());
             
-            ObjectRepo or = new ObjectRepo();
-            AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
-    
-    
             ConnectionSQL c = new ConnectionSQL();
-            Connection conn = ConnectionFactory.getInstance().getConnection(c);
+            Connection conn = ConnectionFactory.getInstance()
+                                               .getConnection(c);
             ObjectRepo or = new ObjectRepo();
-            //or.update(conn,authUser);
+            //userService.authenticate(creds.getUsername(), creds.getPassword());
+           // AppUser authUser = new AppUser(creds.getUsername(),creds.getPassword());
+    
+            
+            Session session = new Session(ConnectionSQL.class);
+            AppUser authUser = session.find(AppUser.class,"username", creds.getUsername()).getFirstEntry();
+            
             //or.read(authUser);
             writer.write(mapper.writeValueAsString(authUser));
     

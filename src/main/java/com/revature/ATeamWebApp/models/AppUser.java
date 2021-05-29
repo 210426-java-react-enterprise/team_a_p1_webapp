@@ -1,9 +1,9 @@
 package com.revature.ATeamWebApp.models;
 
-import com.revature.ATeamORM.util.annotations.Column;
-import com.revature.ATeamORM.util.annotations.Entity;
-import com.revature.ATeamORM.util.annotations.Id;
-
+import com.revature.ATeamORM.annotations.Column;
+import com.revature.ATeamORM.annotations.Entity;
+import com.revature.ATeamORM.annotations.Id;
+import com.revature.ATeamORM.annotations.Table;
 
 /*
     Classes must be named the exact same as the file itself!
@@ -15,17 +15,18 @@ import com.revature.ATeamORM.util.annotations.Id;
         - Does not (usually) contain any methods beyond simple getters and setters
             + maybe the occasional convenience method
  */
-@Entity(name="appuser")
+@Entity
+@Table(name ="appuser")
 public class AppUser {
     
     @Id
     @Column(name="user_id")
     private int id;
-    @Column(name="username")
+    @Column(name="username",unique = true)
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name="email")
+    @Column(name="email",unique = true)
     private String email;
     @Column(name="first_name")
     private String firstName; // variables should be in camelCase
