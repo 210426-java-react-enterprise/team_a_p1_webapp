@@ -2,13 +2,10 @@ package com.revature.ATeamWebApp.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.revature.ATeamORM.repos.ObjectRepo;
-import com.revature.ATeamORM.util.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.dtos.Credentials;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
-import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import com.revature.ATeamWebApp.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -18,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 
 
 public class AuthServlet extends HttpServlet {
@@ -54,12 +50,7 @@ public class AuthServlet extends HttpServlet {
 
             AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
     
-    
-            ConnectionSQL c = new ConnectionSQL();
-            Connection conn = ConnectionFactory.getInstance().getConnection(c);
-            ObjectRepo or = new ObjectRepo();
-            //or.update(conn,authUser);
-            
+
             writer.write(mapper.writeValueAsString(authUser));
     
             

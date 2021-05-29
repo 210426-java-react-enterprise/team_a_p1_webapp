@@ -1,7 +1,8 @@
 package com.revature.ATeamWebApp.services;
 
+import com.revature.ATeamORM.datasource.Session;
 import com.revature.ATeamORM.repos.ObjectRepo;
-import com.revature.ATeamORM.util.datasource.ConnectionFactory;
+import com.revature.ATeamORM.datasource.ConnectionFactory;
 import com.revature.ATeamWebApp.exceptions.*;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
@@ -9,6 +10,7 @@ import com.revature.ATeamWebApp.util.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -17,37 +19,54 @@ public class UserService {
 
     private Logger logger = Logger.getLogger();
     private ObjectRepo objectRepo = new ObjectRepo();
-    
+
 
     public UserService() {
     
     }
 
     public List<AppUser> getAllUsers() {
-        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
-            return objectRepo.read(conn, AppUser.class);
+
+        Session session = new Session(ConnectionSQL.class);
+
+        try (session.open()) {
+            return session.findAll(AppUser.class);
         }  catch (SQLException | DataSourceException | IllegalAccessException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
         }
 
     }
-    /*
-     
-     */
-    public AppUser authenticate(String username, String password) throws AuthenticationException {
 
-        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+    public List<AppUser> getUsers(String fieldName, String fieldValue) {
 
-            return objectRepo.read(conn,AppUser.class);
-           /* return (AppUser) objectRepo.read(conn, AppUser.class).stream().findFirst()
-                                      .orElseThrow(AuthenticationException::new);
-*/
-        } catch (SQLException | DataSourceException | IllegalAccessException e) {
+        Session session = new Session(ConnectionSQL.class);
+
+        try (session.open()) {
+            return session.find(AppUser.class,fieldName,fieldValue).getList();
+        } catch (SQLException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
         }
+    }
 
+    public AppUser authenticate(String username, String password) throws AuthenticationException, SQLException {
+
+        Session session = new Session(ConnectionSQL.class);
+
+        try (session.open()) {
+
+            AppUser user = session.find(AppUser.class,"username",username).getFirstEntry();
+            if (user != null && user.getPassword().equals(password)) {
+                return user;
+            } else {
+                throw new AuthenticationException();
+            }
+
+        } catch (SQLException | DataSourceException e) {
+            logger.warn(e.getMessage());
+            throw new AuthenticationException();
+        }
     }
 
     public void register(AppUser newUser) throws InvalidRequestException, ResourcePersistenceException {
@@ -55,10 +74,12 @@ public class UserService {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
-        
-        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+
+        Session session = new Session(ConnectionSQL.class);
+
+        try (session.open()) {
     
-            objectRepo.create(conn, newUser);
+            session.insert(newUser);
 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -77,9 +98,11 @@ public class UserService {
             throw new InvalidRequestException("Invalid new user data provided!");
         }
 
-        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+        Session session = new Session(ConnectionSQL.class);
 
-            objectRepo.update(conn, newUser);
+        try (session.open()) {
+
+            session.save(newUser);
 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -92,11 +115,13 @@ public class UserService {
 
     }
 
-    public void delete(int id) throws ResourcePersistenceException {
+    public void delete(AppUser user) throws ResourcePersistenceException {
 
-        try (Connection conn = ConnectionFactory.getInstance().getConnection(ConnectionSQL.class)) {
+        Session session = new Session(ConnectionSQL.class);
 
-            objectRepo.delete(conn, id);
+        try (session.open()) {
+
+            session.remove(user);
 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
