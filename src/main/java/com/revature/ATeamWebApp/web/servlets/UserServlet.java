@@ -136,8 +136,22 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        int id = Integer.parseInt(req.getParameter("id"));
-        userService.delete(id);
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+        String firstName = req.getParameter("first_name");
+        String lastName = req.getParameter("last_name");
+        int age = Integer.parseInt(req.getParameter("age"));
+
+        AppUser user = new AppUser();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+
+        userService.delete(user);
 
     }
 }
