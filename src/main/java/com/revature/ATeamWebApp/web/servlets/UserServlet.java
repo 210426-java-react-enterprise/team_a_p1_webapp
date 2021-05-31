@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
+import com.revature.ATeamWebApp.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,11 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 
 
 public class UserServlet extends HttpServlet {
-
+    
+    private final Logger logger = Logger.getLogger();
     private final UserService  userService;
     
     public UserServlet(UserService userService) {
@@ -27,36 +30,38 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        ObjectMapper mapper = new ObjectMapper();
+        PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
         HttpSession session = req.getSession(false);
         AppUser requestingUser = (session == null) ? null : (AppUser) session.getAttribute("this-user");
 
-        if (requestingUser == null) {
+        if (requestingUser != null) {
             resp.setStatus(401);
             return;
-        } else if (!requestingUser.getUsername().equals("AlphaManager")) {
-            resp.setStatus(403);
-            return;
         }
-
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-        String email = req.getParameter("email");
-        String firstName = req.getParameter("first_name");
-        String lastName = req.getParameter("last_name");
-        int age = Integer.parseInt(req.getParameter("age"));
-
-        AppUser newUser = new AppUser();
-        newUser.setUsername(username);
-        newUser.setPassword(password);
-        newUser.setEmail(email);
-        newUser.setFirstName(firstName);
-        newUser.setLastName(lastName);
-        newUser.setAge(age);
-
-        userService.register(newUser);
+        try{
+    
+            AppUser regUser = mapper.readValue(req.getInputStream(),AppUser.class);
+    
+            if(!userService.isUserValid(regUser)){
+                resp.setStatus(406);
+                return;
+            }else if(!userService.isUsernameEmailAvailable(regUser)){
+                resp.setStatus(400);
+                return;
+            }
+    
+            userService.register(regUser);
+            writer.write("Newly created Users.");
+            writer.write(mapper.writeValueAsString(regUser));
+        }catch (MismatchedInputException e){
+            logger.warn(e.getMessage());
+            resp.setStatus(400);
+        }
+        
+        
     }
 
 
@@ -103,8 +108,8 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-
+        ObjectMapper mapper = new ObjectMapper();
+        PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
         HttpSession session = req.getSession(false);
@@ -113,12 +118,16 @@ public class UserServlet extends HttpServlet {
         if (requestingUser == null) {
             resp.setStatus(401);
             return;
-        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+        } else if (!requestingUser.getUsername().equals("AlphaManager")) {
             resp.setStatus(403);
             return;
         }
+        
+        try{
+        
+        }
 
-        String username = req.getParameter("username");
+        /*String username = req.getParameter("username");
         String password = req.getParameter("password");
         String email = req.getParameter("email");
         String firstName = req.getParameter("first_name");
@@ -134,7 +143,7 @@ public class UserServlet extends HttpServlet {
         updatedUser.setAge(age);
 
         userService.update(updatedUser);
-
+*/
 
     }
 

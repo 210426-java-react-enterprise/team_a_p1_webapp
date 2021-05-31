@@ -58,7 +58,7 @@ public class UserService {
         try {
             session.open();
             AppUser user = session.find(AppUser.class, "username", username).getFirstEntry();
-           session.close();
+            session.close();
            
             if (user != null && user.getPassword().equals(password)) {
                 return user;
