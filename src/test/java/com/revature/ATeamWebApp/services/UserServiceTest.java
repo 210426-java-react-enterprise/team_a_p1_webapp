@@ -3,6 +3,7 @@ package com.revature.ATeamWebApp.services;
 import com.revature.ATeamORM.datasource.Result;
 import com.revature.ATeamORM.datasource.Session;
 import com.revature.ATeamORM.repos.ObjectRepo;
+import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.exceptions.ResourcePersistenceException;
 import com.revature.ATeamWebApp.models.AppUser;
 import org.junit.After;
@@ -21,7 +22,9 @@ import static org.mockito.Mockito.mock;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * @author Juan Mendoza
+ */
 public class UserServiceTest {
     
     private UserService sut; //system under testing
@@ -45,31 +48,87 @@ public class UserServiceTest {
         testUsers = null;
     }
     
-    @Test
-    public void test_getAllUsers(){
-        when(mockSession.findAllUsers(any()).getList()).thenReturn(any());
+    @Test(expected = ResourcePersistenceException.class)
+    public void test_getAllUserWithException() throws SQLException, IllegalAccessException {
+        doThrow(SQLException.class).when(mockSession).findAll(any());
         
         sut.getAllUsers();
+    
+        verify(mockSession,times(0)).isEntityUnique(any());
+        verify(mockSession,times(0)).findAll(any());
+        verify(mockSession,times(0)).find(any(),any(),any());
+        verify(mockSession,times(0)).save(any());
+        verify(mockSession,times(0)).insert(any());
+        verify(mockSession,times(0)).remove(any());
         
-        verify(mockSession,times(1)).findAllUsers(any());
+    }
+    
+    @Test
+    public void test_getAllUsers() throws SQLException {
+        UserService spyUS = spy(sut);
+        List<AppUser> expectedList = testUsers;
+        
+        doReturn(expectedList).when(spyUS).getAllUsers();
+        
+        List<AppUser> actual = spyUS.getAllUsers();
+        
+        verify(spyUS,times(1)).getAllUsers();
+        Assert.assertEquals(expectedList,actual);
+    }
+    
+   @Test(expected = AuthenticationException.class)
+   public void test_getUserWithException() throws SQLException, IllegalAccessException {
+        doThrow(SQLException.class).when(mockSession).find(any(),any(),any());
+        
+        sut.getUser("username",testUsers.get(0).getUsername());
+    
+        verify(mockSession,times(0)).isEntityUnique(any());
+        verify(mockSession,times(0)).findAll(any());
+        verify(mockSession,times(0)).find(any(),any(),any());
+        verify(mockSession,times(0)).save(any());
+        verify(mockSession,times(0)).insert(any());
+        verify(mockSession,times(0)).remove(any());
     }
     
     @Test
     public void test_getUser() throws SQLException {
-        when(mockSession.find(any(),any(),any()).getList()).thenReturn(any());
+        UserService spyUS = spy(sut);
+        AppUser expected = testUsers.get(0);
+    
+        doReturn(expected).when(spyUS).getUser(any(),any());
+    
+        AppUser actual = spyUS.getUser(any(),any());
+    
+        verify(spyUS,times(1)).getUser(any(),any());
+        Assert.assertEquals(expected,actual);
+    }
+    
+    @Test (expected = AuthenticationException.class)
+    public void test_authenticateWithException() throws SQLException, IllegalAccessException {
+        doThrow(SQLException.class).when(mockSession).find(any(),any(),any());
         
-        sut.getUser("username",testUsers.get(0).getUsername());
+        sut.authenticate("username",testUsers.get(0).getUsername());
+    
+        verify(mockSession,times(0)).isEntityUnique(any());
+        verify(mockSession,times(0)).findAll(any());
+        verify(mockSession,times(0)).find(any(),any(),any());
+        verify(mockSession,times(0)).save(any());
+        verify(mockSession,times(0)).insert(any());
+        verify(mockSession,times(0)).remove(any());
         
-        verify(mockSession,times(1)).find(any(),any(),any());
     }
     
     @Test
     public void test_authenticateWithIncorrectUsernameAndPassword() throws SQLException {
-        when(mockSession.find(any(),any(),any()).getFirstEntry()).thenReturn(null);
-        
-        sut.authenticate("username",testUsers.get(0).getUsername());
-        
-        verify(mockSession, times(1)).find(any(),any(),any());
+        UserService spyUS = spy(sut);
+        AppUser expected = testUsers.get(0);
+    
+        doReturn(expected).when(spyUS).authenticate(any(),any());
+    
+        AppUser actual = spyUS.authenticate(any(),any());
+    
+        verify(spyUS,times(1)).authenticate(any(),any());
+        Assert.assertEquals(expected,actual);
     }
     
     @Test
@@ -79,7 +138,7 @@ public class UserServiceTest {
         sut.isUsernameEmailAvailable(testUsers.get(0));
         
         verify(mockSession,times(1)).isEntityUnique(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         verify(mockSession,times(0)).find(any(),any(),any());
         verify(mockSession,times(0)).save(any());
         verify(mockSession,times(0)).insert(any());
@@ -93,7 +152,7 @@ public class UserServiceTest {
         sut.isUsernameEmailAvailable(testUsers.get(0));
         
         verify(mockSession,times(1)).isEntityUnique(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         verify(mockSession,times(0)).find(any(),any(),any());
         verify(mockSession,times(0)).save(any());
         verify(mockSession,times(0)).insert(any());
@@ -101,12 +160,27 @@ public class UserServiceTest {
     
     }
     
+    @Test(expected = ResourcePersistenceException.class)
+    public void test_isUsernameEmailAvailableWithException() throws SQLException, IllegalAccessException {
+        doThrow(SQLException.class).when(mockSession).isEntityUnique(any());
+        
+        sut.isUsernameEmailAvailable(testUsers.get(0));
+        
+        verify(mockSession,times(0)).isEntityUnique(any());
+        verify(mockSession,times(0)).findAll(any());
+        verify(mockSession,times(0)).find(any(),any(),any());
+        verify(mockSession,times(0)).save(any());
+        verify(mockSession,times(0)).insert(any());
+        verify(mockSession,times(0)).remove(any());
+        
+    }
+    
     @Test
     public void test_registerProperUser() throws SQLException {
         sut.register(testUsers.get(0));
         
         verify(mockSession,times(1)).insert(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         
         try{
             verify(mockSession,times(0)).find(any(),any(),any());
@@ -126,7 +200,7 @@ public class UserServiceTest {
         sut.register(testUsers.get(0));
         
         verify(mockSession,times(0)).insert(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         
         try{
             verify(mockSession,times(0)).find(any(),any(),any());
@@ -145,7 +219,7 @@ public class UserServiceTest {
         sut.update(testUsers.get(0));
     
         verify(mockSession,times(1)).save(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         
         try{
             verify(mockSession,times(0)).find(any(),any(),any());
@@ -167,7 +241,7 @@ public class UserServiceTest {
         sut.update(testUsers.get(0));
         
         verify(mockSession,times(0)).save(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         
         try{
             verify(mockSession,times(0)).find(any(),any(),any());
@@ -189,7 +263,7 @@ public class UserServiceTest {
         sut.delete(testUsers.get(0));
         
         verify(mockSession,times(0)).remove(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         verify(mockSession,times(0)).find(any(),any(),any());
         verify(mockSession,times(0)).save(any());
         verify(mockSession,times(0)).insert(any());
@@ -204,7 +278,7 @@ public class UserServiceTest {
         sut.delete(testUsers.get(0));
     
         verify(mockSession,times(1)).remove(any());
-        verify(mockSession,times(0)).findAllUsers(any());
+        verify(mockSession,times(0)).findAll(any());
         verify(mockSession,times(0)).find(any(),any(),any());
         verify(mockSession,times(0)).save(any());
         verify(mockSession,times(0)).insert(any());

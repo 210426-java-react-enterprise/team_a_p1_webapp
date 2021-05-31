@@ -30,8 +30,16 @@ public class UserService {
     }
     
     public List<AppUser> getAllUsers() {
-        
-            return session.findAllUsers(AppUser.class).getList();
+        try {
+            
+            session.open();
+            List<AppUser> soughtAllUsers =session.findAll(AppUser.class).getList();
+            session.close();
+            return soughtAllUsers;
+            
+        } catch (SQLException throwables) {
+            throw new ResourcePersistenceException();
+        }
     }
     
     
@@ -39,7 +47,12 @@ public class UserService {
   
         //(session.open())
         try {
-            return session.find(AppUser.class, fieldName, fieldValue).getFirstEntry();
+            
+            session.open();
+            AppUser wantedUser =session.find(AppUser.class, fieldName, fieldValue).getFirstEntry();
+            session.close();
+            return wantedUser;
+            
         } catch (SQLException e) {
             logger.warn(e.getMessage());
             throw new AuthenticationException();
@@ -49,9 +62,11 @@ public class UserService {
     public AppUser authenticate(String username, String password) throws AuthenticationException, SQLException {
         
         try {
-            
+            session.open();
             AppUser user = session.find(AppUser.class, "username", username)
                                   .getFirstEntry();
+           session.close();
+           
             if (user != null && user.getPassword()
                                     .equals(password)) {
                 return user;
@@ -72,17 +87,17 @@ public class UserService {
         }
         
         try {
+            
+            session.open();
             session.insert(newUser);
+            session.close();
             
         } catch (SQLException e) {
             logger.warn(e.getMessage());
             e.printStackTrace();
             throw new ResourcePersistenceException();
-        } catch (UsernameUnavailableException | EmailUnavailableException e) {
-            logger.warn(e.getMessage());
-            throw new ResourcePersistenceException(e.getMessage());
         }
-        
+       
     }
     
     public void update(AppUser newUser) throws InvalidRequestException {
@@ -92,7 +107,10 @@ public class UserService {
         }
         
         try {
+            
+            session.open();
             session.save(newUser);
+            session.close();
             
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -110,7 +128,9 @@ public class UserService {
         
         try {
             
+            session.open();
             session.remove(user);
+            session.close();
             
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -122,13 +142,14 @@ public class UserService {
     public boolean isUsernameEmailAvailable(AppUser user) {
     
         try {
-            return session.isEntityUnique(user);
+            session.open();
+            boolean result = session.isEntityUnique(user);
+            session.close();
+            return result;
+            
         } catch (SQLException | IllegalAccessException throwables) {
-            throwables.printStackTrace();
+            throw new ResourcePersistenceException();
         }
-    
-    
-        return false;
     }
     
     public boolean isUserValid(AppUser user) {
