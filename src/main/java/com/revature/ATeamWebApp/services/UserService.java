@@ -1,19 +1,14 @@
 package com.revature.ATeamWebApp.services;
 
-import com.revature.ATeamORM.datasource.ConnectionFactory;
-import com.revature.ATeamORM.datasource.Result;
-import com.revature.ATeamORM.repos.ObjectRepo;
+
 import com.revature.ATeamORM.datasource.Session;
 
 import com.revature.ATeamWebApp.exceptions.*;
 import com.revature.ATeamWebApp.models.AppUser;
 
-import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import com.revature.ATeamWebApp.util.logging.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -44,8 +39,7 @@ public class UserService {
     
     
     public AppUser getUser(String fieldName, String fieldValue) {
-  
-        //(session.open())
+        
         try {
             
             session.open();
@@ -59,16 +53,14 @@ public class UserService {
         }
     }
     
-    public AppUser authenticate(String username, String password) throws AuthenticationException, SQLException {
+    public AppUser authenticate(String username, String password) throws AuthenticationException {
         
         try {
             session.open();
-            AppUser user = session.find(AppUser.class, "username", username)
-                                  .getFirstEntry();
+            AppUser user = session.find(AppUser.class, "username", username).getFirstEntry();
            session.close();
            
-            if (user != null && user.getPassword()
-                                    .equals(password)) {
+            if (user != null && user.getPassword().equals(password)) {
                 return user;
             } else {
                 throw new AuthenticationException();

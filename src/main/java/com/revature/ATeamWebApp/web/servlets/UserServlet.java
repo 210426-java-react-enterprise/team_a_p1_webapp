@@ -36,7 +36,7 @@ public class UserServlet extends HttpServlet {
         if (requestingUser == null) {
             resp.setStatus(401);
             return;
-        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+        } else if (!requestingUser.getUsername().equals("AlphaManager")) {
             resp.setStatus(403);
             return;
         }
@@ -83,7 +83,9 @@ public class UserServlet extends HttpServlet {
         }
         
         try{
+            
             String userIdParam = req.getParameter("id");
+            
             if(userIdParam == null){
                 List<AppUser> users = userService.getAllUsers();
                 writer.write(mapper.writeValueAsString(users));

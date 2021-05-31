@@ -14,8 +14,7 @@ public class DependencyLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         //some dependecy injection at the start of tomcat
-        Session session = null;
-        session = new Session(ConnectionSQL.class);
+        Session session = new Session(ConnectionSQL.class);
         UserService userService = new UserService(session);
         
         AuthServlet authServlet = new AuthServlet(userService);
