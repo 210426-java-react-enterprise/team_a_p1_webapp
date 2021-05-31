@@ -15,7 +15,7 @@ import com.revature.ATeamORM.annotations.Table;
         - Does not (usually) contain any methods beyond simple getters and setters
             + maybe the occasional convenience method
  */
-@Entity
+@Entity(name="appuser")
 @Table(name ="appuser")
 public class AppUser {
     

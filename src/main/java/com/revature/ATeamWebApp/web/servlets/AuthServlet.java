@@ -54,24 +54,11 @@ public class AuthServlet extends HttpServlet {
         try {
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
             logger.info("Attempting to authenticate user, %s, with provided credentials", creds.getUsername());
-
-            ConnectionSQL c = new ConnectionSQL();
-            Connection conn = ConnectionFactory.getInstance()
-                                               .getConnection(c);
-            ObjectRepo or = new ObjectRepo();
+            
             
            AppUser authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
-    
-            
-            Session session = new Session(ConnectionSQL.class);
-            authUser = session.find(AppUser.class,"username", creds.getUsername()).getFirstEntry();
-            
-            //or.read(authUser);
-
+           
             writer.write(mapper.writeValueAsString(authUser));
-    
-            
-
             req.getSession().setAttribute("this-user", authUser);
 
         } catch (MismatchedInputException e) {

@@ -82,7 +82,7 @@
         </dependency>
 
         <dependency>
-            <groupId>groupId</groupId>
+            <groupId>com.revature</groupId>
             <artifactId>team_a_p1_orm</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
