@@ -43,7 +43,17 @@ public class AppUser {
         this.username = username;
         this.password = password;
     }
-
+    
+    public AppUser(int id, String username, String password, String email, String firstName, String lastName, int age) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+    
     public int getId() {
         return id;
     }
