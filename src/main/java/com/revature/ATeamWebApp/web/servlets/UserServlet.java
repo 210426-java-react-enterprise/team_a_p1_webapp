@@ -3,6 +3,7 @@ package com.revature.ATeamWebApp.web.servlets;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.revature.ATeamWebApp.exceptions.InvalidRequestException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
 import com.revature.ATeamWebApp.util.logging.Logger;
@@ -124,32 +125,23 @@ public class UserServlet extends HttpServlet {
         }
         
         try{
-        
+
+            AppUser regUser = mapper.readValue(req.getInputStream(),AppUser.class);
+
+            userService.update(regUser);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidRequestException e) {
+            e.printStackTrace();
         }
-
-        /*String username = req.getParameter("username");
-        String password = req.getParameter("password");
-        String email = req.getParameter("email");
-        String firstName = req.getParameter("first_name");
-        String lastName = req.getParameter("last_name");
-        int age = Integer.parseInt(req.getParameter("age"));
-
-        AppUser updatedUser = new AppUser();
-        updatedUser.setUsername(username);
-        updatedUser.setPassword(password);
-        updatedUser.setEmail(email);
-        updatedUser.setFirstName(firstName);
-        updatedUser.setLastName(lastName);
-        updatedUser.setAge(age);
-
-        userService.update(updatedUser);
-*/
 
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        ObjectMapper mapper = new ObjectMapper();
         resp.setContentType("application/json");
 
         HttpSession session = req.getSession(false);
@@ -158,25 +150,12 @@ public class UserServlet extends HttpServlet {
         if (requestingUser == null) {
             resp.setStatus(401);
             return;
-        } else if (!requestingUser.getUsername().equals("wsingleton")) {
+        } else if (!requestingUser.getUsername().equals("AlphaManager")) {
             resp.setStatus(403);
             return;
         }
 
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-        String email = req.getParameter("email");
-        String firstName = req.getParameter("first_name");
-        String lastName = req.getParameter("last_name");
-        int age = Integer.parseInt(req.getParameter("age"));
-
-        AppUser user = new AppUser();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setAge(age);
+        AppUser user = mapper.readValue(req.getInputStream(),AppUser.class);
 
         userService.delete(user);
 
