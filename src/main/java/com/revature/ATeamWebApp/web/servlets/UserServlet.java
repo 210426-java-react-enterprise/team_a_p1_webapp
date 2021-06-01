@@ -123,9 +123,7 @@ public class UserServlet extends HttpServlet {
             return;
         }
         
-        try{
         
-        }
 
         /*String username = req.getParameter("username");
         String password = req.getParameter("password");
