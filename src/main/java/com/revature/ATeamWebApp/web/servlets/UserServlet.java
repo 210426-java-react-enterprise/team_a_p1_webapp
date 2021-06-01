@@ -126,6 +126,7 @@ public class UserServlet extends HttpServlet {
         
         try{
 
+
             AppUser regUser = mapper.readValue(req.getInputStream(),AppUser.class);
 
             userService.update(regUser);
