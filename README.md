@@ -1,7 +1,7 @@
 # team_a_p1_webapp
 Team Alpha's WebApp repo
 
-# General
+## General
 User Management Web-Application that leverages a custom Object Relational Mapper(ORM). Custom ORM can be found [here](https://github.com/210426-java-react-enterprise/team_a_p1_orm)
   * Maven Project
     - use `mvn install` to install maven
@@ -13,20 +13,20 @@ User Management Web-Application that leverages a custom Object Relational Mapper
   * Uses PostgeSQL database
     - "application.properties" file needs to be added with database information (url, schema, username, password)
 
-# Two Servlets (Authorization & User Management)
+## Two Servlets (Authorization & User Management)
   * Port: 8080
   * Context Path: "*/team_a_p1_webapp/"
   * Authorization endpoint: "*/auth"
   * User Management endpoint: "*/users"
 
-# Authorization endpoint
+### Authorization endpoint
   * Post Request
     - validates credentials from a JSON
     - returns the authorized user
   * Delete Request 
     - invalidates session and logs out
 
-# User Management endpoint
+### User Management endpoint
   * Get Request
     - gets all users when no parameter is provided (admin privileges needed; modify doGet method in UserServlet)
     - gets user with the provide user ID
@@ -38,3 +38,7 @@ User Management Web-Application that leverages a custom Object Relational Mapper
     - validates inputs and updates user with new information
   * Delete Request
     - search for user and deletes if from database
+
+## Other
+ * Jacoco installed (can create reports)
+ * Logger not fully functioning (can ignore errors to write to file)
