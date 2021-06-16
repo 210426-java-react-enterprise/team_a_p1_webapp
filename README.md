@@ -5,7 +5,7 @@ Team Alpha's WebApp repo
 User Management Web-Application that leverages a custom Object Relational Mapper(ORM). Custom ORM can be found [here](https://github.com/210426-java-react-enterprise/team_a_p1_orm)
   * Maven Project
     - use `mvn install` to install maven
-    - use `mvn clean package` to create .war file
+    - use `mvn clean package` to create "team_a_p1_webapp-1.0-SNAPSHOT.war" file
   * Uses Tomcat9
     - run server beforehand
   * Uses Servlets
