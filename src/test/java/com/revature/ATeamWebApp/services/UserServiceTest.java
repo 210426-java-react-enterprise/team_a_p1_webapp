@@ -188,7 +188,7 @@ public class UserServiceTest {
             verify(mockSession,times(0)).save(any());
             verify(mockSession,times(0)).remove(any());
             
-        } catch (SQLException | IllegalAccessException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         
@@ -208,7 +208,7 @@ public class UserServiceTest {
             verify(mockSession,times(0)).save(any());
             verify(mockSession,times(0)).remove(any());
             
-        } catch (SQLException | IllegalAccessException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         
@@ -227,7 +227,7 @@ public class UserServiceTest {
             verify(mockSession,times(0)).insert(any());
             verify(mockSession,times(0)).remove(any());
     
-        } catch (SQLException | IllegalAccessException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     
@@ -249,14 +249,14 @@ public class UserServiceTest {
             verify(mockSession,times(0)).insert(any());
             verify(mockSession,times(0)).remove(any());
             
-        } catch (SQLException | IllegalAccessException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         
     }
     
     @Test(expected = ResourcePersistenceException.class)
-    public void test_deleteWithSQLException() throws SQLException, IllegalAccessException {
+    public void test_deleteWithSQLException() throws SQLException {
         //we throw resource persistence exception when sql exception occurs
        doThrow(SQLException.class).when(mockSession).remove(any());
        
@@ -273,7 +273,7 @@ public class UserServiceTest {
   
     
     @Test
-    public void test_delete() throws SQLException, IllegalAccessException {
+    public void test_delete() throws SQLException {
   
         sut.delete(testUsers.get(0));
     
@@ -286,7 +286,7 @@ public class UserServiceTest {
     }
     
     @Test
-    public void test_isUserValidWithValidUserName() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void test_isUserValidWithValidUserName() throws NoSuchMethodException, InvocationTargetException {
         AppUser validUser = new AppUser(1,"TestUsername","password","test@gmail.com","jihn","bard",30);
         testUsers.add(validUser);//well be position one because in setUp method we have a user added already
         Boolean expected = true;
@@ -297,7 +297,7 @@ public class UserServiceTest {
         
     }
     @Test
-    public void test_isUserValidWithEmptyUserName() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void test_isUserValidWithEmptyUserName() throws NoSuchMethodException, InvocationTargetException {
         AppUser validUser = new AppUser(1,"","password","test@gmail.com","jihn","bard",30);
         testUsers.add(validUser);//well be position one because in setUp method we have a user added already
         Boolean expected = false;
@@ -309,7 +309,7 @@ public class UserServiceTest {
     }
     
     @Test
-    public void test_isUserValidWithNullUsername() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void test_isUserValidWithNullUsername() throws NoSuchMethodException, InvocationTargetException {
         AppUser validUser = new AppUser(1,null,"password","test@gmail.com","jihn","bard",30);
         testUsers.add(validUser);//well be position one because in setUp method we have a user added already
         Boolean expected = true;

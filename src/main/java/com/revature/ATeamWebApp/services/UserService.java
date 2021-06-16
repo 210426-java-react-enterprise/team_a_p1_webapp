@@ -139,7 +139,7 @@ public class UserService {
             session.close();
             return result;
             
-        } catch (SQLException | IllegalAccessException throwables) {
+        } catch (SQLException throwables) {
             throw new ResourcePersistenceException();
         }
     }
