@@ -7,7 +7,6 @@ import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.sql.SQLException;
 
 public class DependencyLoaderListener implements ServletContextListener {
     

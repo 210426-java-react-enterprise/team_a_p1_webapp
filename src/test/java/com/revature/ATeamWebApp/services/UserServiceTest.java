@@ -1,8 +1,6 @@
 package com.revature.ATeamWebApp.services;
 
-import com.revature.ATeamORM.datasource.Result;
 import com.revature.ATeamORM.datasource.Session;
-import com.revature.ATeamORM.repos.ObjectRepo;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.exceptions.ResourcePersistenceException;
 import com.revature.ATeamWebApp.models.AppUser;
@@ -12,14 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**

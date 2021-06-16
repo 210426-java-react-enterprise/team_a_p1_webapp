@@ -3,15 +3,12 @@ package com.revature.ATeamWebApp.web.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
-import com.revature.ATeamORM.datasource.ConnectionFactory;
-import com.revature.ATeamORM.datasource.Session;
-import com.revature.ATeamORM.repos.ObjectRepo;
+
 
 import com.revature.ATeamWebApp.dtos.Credentials;
 import com.revature.ATeamWebApp.exceptions.AuthenticationException;
 import com.revature.ATeamWebApp.models.AppUser;
 import com.revature.ATeamWebApp.services.UserService;
-import com.revature.ATeamWebApp.util.datasource.ConnectionSQL;
 import com.revature.ATeamWebApp.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -21,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 
 
 public class AuthServlet extends HttpServlet {
